@@ -1,2 +1,2 @@
-# Här delar vi kod mellan varandra inför övningar. 
+# Här delar vi kod mellan varandra inför inlämningar. 
 #Välkommen Joakim
