@@ -46,46 +46,38 @@ def plot_points(coord_list):
     fig, ax = plt.subplots(1, figsize=(10, 6))
     fig.suptitle('Koordinater')
     coord_x, coord_y = np.split(read_coordinate_file(filename), 2)
-    plt.scatter(coord_x, coord_y)
+    plt.scatter(coord_x, coord_y)  # plottar givna koordinater
     coord_x = coord_x.reshape(sz, 1)
     coord_y = coord_y.reshape(sz, 1)
     for k, txt in enumerate(n):
-        plt.annotate(txt-1, (coord_x[k], coord_y[k]))
+        plt.annotate(txt-1, (coord_x[k], coord_y[k]))  # numrerar koordinaterna
     plt.show()
 
 
 # plot_points(read_coordinate_file(filename))
 
-# def construct_graph_connections(coord_list, radius):
+radius = 0.06
 
 
-lst = []
-radius = 0.1
-print(coord_list)
+def construct_graph_connections(coord_list, radius):
+    x = coord_list[0]
+    y = coord_list[1]
+    lst = list()
+    result = list()
+    for nr, X in enumerate(x):
+        lst.append([nr, X, y[nr]])
+
+    for coord in lst:
+        for coord_test in lst:
+            r = (((coord_test[2]-coord[2])**2) + (coord_test[1]-coord[1])**2) ** 0.5
+            if coord[0] == coord_test[0]:
+                continue
+            elif abs(r) < radius:
+                result.append([coord, coord_test, r])
+            else:
+                continue
+    return result
 
 
-coord_list = coord_list.reshape((coord_list.shape[1], 2))
-
-for X, element1 in enumerate(coord_list):
-    print(element1[1])
-
-    for Y, element2 in enumerate(coord_list):
-
-        r = (((element2[0] - element1[0]) ** 2) + element2[1] - element1[1] ** 2) ** 0.5
-        if abs(r) < radius:
-            lst.append([X, element1, Y, element2, r])
-        else:
-            continue
-print(lst)
-
-#Här blir det fel med
-# for nr, element in enumerate(coord_list):
-#     x = element[0]
-#     y = ele
-#     # r = (((element2[0]-element1[0])**2) + element2[1]-element1[1]**2) ** 0.5
-#     # if abs(r) < radius:
-#     #     lst.append([X, element1, Y, element2, r])
-#     # else:
-#     #     continue
-# print(lst)
+print(construct_graph_connections(coord_list, radius))
 
