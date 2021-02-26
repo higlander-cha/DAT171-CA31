@@ -2,6 +2,7 @@ import math as m
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.sparse as sp
+from matplotlib.collections import LineCollection
 from scipy import spatial
 
 plt.rcParams['figure.figsize'] = [5, 3]
@@ -34,7 +35,7 @@ def read_coordinate_file(filename):
             a, b = line.split(',')
             x_lst.append(x_factor(float(b)))
             y_lst.append(y_factor(float(a)))
-    coord_list = np.array([x_lst, y_lst])
+    coord_list = np.array((x_lst, y_lst))
     return coord_list
 
 
@@ -64,30 +65,40 @@ def construct_graph_connections(coord_list, radius):
     return indices, dist
 
 
-N = coord_list.shape[1]
+N = len(coord_list)
 distance = construct_graph_connections(coord_list, radius)[1]
 indices = construct_graph_connections(coord_list, radius)[0]
+
+print(np.array(coord_list).T)
+
+
 
 def construct_graph(indices, distance, N):
     mtx = sp.csr_matrix((distance, np.array(indices).T), shape=(N, N))
     return mtx
 
 
-
-def plot_points(coord_list):
+def plot_points(coord_list, indices):
     """Plottar och numrerar koordinater"""
-    sz = coord_list.shape[1]
-    n = np.linspace(1, sz, sz)
     fig, ax = plt.subplots(1, figsize=(10, 6))
     fig.suptitle('Koordinater')
+    sz = coord_list.shape[1]
+    line = coord_list.T
+
+    line = line[np.array(indices)]
+    lines = LineCollection(line, linewidths=0.1, colors="b")
+    n = np.linspace(1, sz, sz)
+
     coord_x, coord_y = np.split(read_coordinate_file(filename), 2)
+    ax.add_collection(lines)
     plt.scatter(coord_x, coord_y)  # plottar givna koordinater
     coord_x = coord_x.reshape(sz, 1)
     coord_y = coord_y.reshape(sz, 1)
     for k, txt in enumerate(n):
         plt.annotate(txt-1, (coord_x[k], coord_y[k]))  # numrerar koordinaterna i plotten
+
     plt.show()
 
 
-plot_points(read_coordinate_file(filename))
+plot_points(read_coordinate_file(filename), indices)
 
